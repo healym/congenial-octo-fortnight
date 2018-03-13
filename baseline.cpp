@@ -57,35 +57,6 @@ int main ( int argc, char *argv[] )
   ofstream fout_left(left_file.c_str(), ios::out | ios::app );
   ofstream fout_right(right_file.c_str(), ios::out | ios::app );
 
-  /*           =<< ALWAYS BEGIN WITH PHILOSOPHER 0 >>=   */
-  if (id == 0) {
-    string stanza_1, stanza_2, stanza_3;
-    stanza_1 = P.getLine();
-    fout_left << stanza_1 << endl;
-    fout_right << stanza_1 << endl;
-
-    stanza_2 = P.getLine();
-    fout_left << stanza_2 << endl;
-    fout_right << stanza_2 << endl;
-
-    stanza_3 = P.getLine();
-    fout_left << stanza_3 << endl << endl;
-    fout_right << stanza_3 << endl << endl;
-
-    cout << "   =<< " << id << " :: WORK COMPLETE >>=" << endl;
-
-    numWritten++;
-
-    for (int phil = 1; phil < p; phil++) {
-      MPI::COMM_WORLD.Send("PHIL 0 FINISHED", 1, MPI::INT, phil, give_file);
-    }
-    cout << "\n   =<< 0:: FINISHED WITH INITIAL PASS >>=\n" << endl;
-  } else {
-    MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, 0, give_file, status_glob); // wait for 0 to finish
-    cout << "   =<< " << id << " :: 0 DONE >>=" << endl;
-  }
-  /*          =<< DONE WITH PHILOSOPHER 0 >>=                        */
-
 
   while (numWritten < MAX_MESSAGES) {
     MPI::Request req_left;
