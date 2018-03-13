@@ -119,7 +119,7 @@ int main ( int argc, char *argv[] )
         if (id > left_neighbor) {
           cout << "= [ " << id << " :: CONCEDING TO " << left_neighbor << " ] =" << endl;
           MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, give_file);
-          req_right = MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
+          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
           cout << "= [ " << id << " :: LEFT FILE RETURNED FROM " << left_neighbor << " ] =" << endl;
         } else {
           cout << "= [ " << id << " :: WORKING FIRST ] =" << endl;
@@ -209,9 +209,9 @@ int main ( int argc, char *argv[] )
     numWritten++;
   
   /*                              =<< GIVE BACK CONTROL >>=                           */
-    MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, give_file);
+    MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, left_neighbor, give_file);
     cout << "= [ " << id << " :: RETURNING LEFT ] =" << endl;
-    MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, give_file);
+    MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, right_neighbor, give_file);
     cout << "= [ " << id << " :: RETURNING RIGHT ] =" << endl;
   }
   fout_left.close();
