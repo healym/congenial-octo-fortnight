@@ -76,9 +76,6 @@ int main ( int argc, char *argv[] )
 
     numWritten++;
 
-    for (int phil = 1; phil < p; phil++) {
-      MPI::COMM_WORLD.Send("PHIL 0 FINISHED", 1, MPI::INT, phil, give_file);
-    }
     cout << "\n   =<< 0:: FINISHED WITH INITIAL PASS >>=\n" << endl;
   } else {
     MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, 0, give_file, status_glob); // wait for 0 to finish
