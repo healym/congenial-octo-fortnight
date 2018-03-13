@@ -152,7 +152,7 @@ int main ( int argc, char *argv[] )
         }
       }
     } else {
-      cout << "= [ " << id << " :: CHECKING " << left_neighbor << " BEFORE " << right_neighbor << " ] =" << endl;
+      cout << "= [ " << id << " :: CHECKING " << right_neighbor << " BEFORE " << left_neighbor << " ] =" << endl;
       MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, access_file_right);
       rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
       req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, access_file_left);
