@@ -108,7 +108,7 @@ int main ( int argc, char *argv[] )
       MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, access_file_left);
       rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
       req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, access_file_right);
-      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << " :: LEFT ] =" << endl;
+      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << ":" << id << " :: LEFT ] =" << endl;
       while (!left_response) {
         left_recieved = rec_left.Test(status_left);
         left_requested = req_left.Test(status_left);
@@ -131,7 +131,7 @@ int main ( int argc, char *argv[] )
       MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, access_file_right);
       rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
       req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, access_file_left);
-      cout << "= [ " << id << " :: REQUESTING " << right_neighbor << " :: RIGHT ] =" << endl;
+      cout << "= [ " << id << " :: REQUESTING " << id << ":" << right_neighbor << " :: RIGHT ] =" << endl;
       while (!right_response) {
         right_recieved = rec_left.Test(status_right);
         right_requested = req_left.Test(status_right);
@@ -156,7 +156,7 @@ int main ( int argc, char *argv[] )
       MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, access_file_right);
       rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
       req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, access_file_left);
-      cout << "= [ " << id << " :: REQUESTING " << right_neighbor << " :: RIGHT ] =" << endl;
+      cout << "= [ " << id << " :: REQUESTING " << id << ":" << right_neighbor << " :: RIGHT ] =" << endl;
       while (!right_response) {
         right_recieved = rec_left.Test(status_right);
         right_requested = req_left.Test(status_right);
@@ -179,7 +179,7 @@ int main ( int argc, char *argv[] )
       MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, access_file_left);
       rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
       req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, access_file_right);
-      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << " :: LEFT ] =" << endl;
+      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << ":" << id << " :: LEFT ] =" << endl;
       while (!left_response) {
         left_recieved = rec_left.Test(status_left);
         left_requested = req_left.Test(status_left);
