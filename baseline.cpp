@@ -25,9 +25,9 @@ int main ( int argc, char *argv[] )
   MPI_Request requestLeft, requestRight;
   int tag = 1;
   int give_file = 3;
-  int access_file_1 = 4
-  int access_file_2 = 5
-  int file_request_1 = 6
+  int access_file_1 = 4;
+  int access_file_2 = 5;
+  int file_request_1 = 6;
   int file_request_2 = 7;
 
   //  Initialize MPI.
@@ -56,6 +56,10 @@ int main ( int argc, char *argv[] )
   int msgIn, msgOut;
   int leftNeighbor = (id - 1 + p) % p;
   int rightNeighbor = (id + 1) % p;
+	
+	//These needed declared... This may not be the correct initial declaration
+	string msgStr = "";
+	int flag = 0;
 
   pomerize P;
 
@@ -90,7 +94,7 @@ int main ( int argc, char *argv[] )
     recv_right = MPI::COMM_WORLD.Iprobe(rightNeighbor, access_file_2);
     cout << "= [ " << id << ":: CHECK NEIGHBORS ] =" << std::endl;
 
-    if(!recvRight)
+    if(!recv_right)
     {
       MPI::COMM_WORLD.Send("GOT FILE", 1, MPI::INT, rightNeighbor, access_file_1);
       std::cout << "= [ " << id << ":: ACKNOWLEDGE RECIEVE ] =" << std::endl;
