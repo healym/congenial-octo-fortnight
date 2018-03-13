@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Settings
+*.vscode
+
+# Program specific
+out*
