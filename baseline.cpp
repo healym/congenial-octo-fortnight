@@ -74,102 +74,12 @@ int main ( int argc, char *argv[] )
     /*                =<< CHECKING FOR AVAILIBILIITY OF FILES >>=                  */
 
     // Check availability of files
-    if (left_neighbor < right_neighbor) { // check lower philosopher first
-      cout << "= [ " << id << " :: CHECKING " << left_neighbor << " BEFORE " << right_neighbor << " ] =" << endl;
-      MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, access_file_left);
-      rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-      req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, access_file_right);
-      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << ":" << id << " :: LEFT ] =" << endl;
-      while (!left_response) {
-        left_recieved = rec_left.Test(status_left);
-        left_requested = req_left.Test(status_left);
-        left_response = left_requested || left_recieved;
-      }
-      if (left_requested) {
-        cout << "= [ " << id << " :: RECIEVED REQUEST FROM " << left_neighbor << " ] =" << endl;
-        if (id > left_neighbor) {
-          cout << "= [ " << id << " :: CONCEDING TO " << left_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: FILE SENT TO " << left_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: LEFT FILE RETURNED FROM " << left_neighbor << " ] =" << endl;
-        } else {
-          cout << "= [ " << id << " :: WORKING FIRST ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: LEFT FILE RECEIVED FROM " << left_neighbor << " ] =" << endl;
-        }
-      }
-      MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, access_file_right);
-      rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-      req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, access_file_left);
-      cout << "= [ " << id << " :: REQUESTING " << id << ":" << right_neighbor << " :: RIGHT ] =" << endl;
-      while (!right_response) {
-        right_recieved = rec_left.Test(status_right);
-        right_requested = req_left.Test(status_right);
-        right_response = right_requested || right_recieved;
-      }
-      if (right_requested) {
-        cout << "= [ " << id << " :: RECIEVED REQUEST FROM " << right_neighbor << " ] =" << endl;
-        if (id > right_neighbor) {
-          cout << "= [ " << id << " :: CONCEDING TO " << right_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: FILE SENT TO " << right_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: RIGHT FILE RETURNED FROM " << right_neighbor << " ] =" << endl;
-        } else {
-          cout << "= [ " << id << " :: WORKING FIRST ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: RIGHT FILE RECEIVED FROM " << right_neighbor << " ] =" << endl;
-        }
-      }
-    } else {
-      cout << "= [ " << id << " :: CHECKING " << right_neighbor << " BEFORE " << left_neighbor << " ] =" << endl;
-      MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, right_neighbor, access_file_right);
-      rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-      req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, right_neighbor, access_file_left);
-      cout << "= [ " << id << " :: REQUESTING " << id << ":" << right_neighbor << " :: RIGHT ] =" << endl;
-      while (!right_response) {
-        right_recieved = rec_left.Test(status_right);
-        right_requested = req_left.Test(status_right);
-        right_response = right_requested || right_recieved;
-      }
-      if (right_requested) {
-        cout << "= [ " << id << " :: RECIEVED REQUEST FROM " << right_neighbor << " ] =" << endl;
-        if (id > right_neighbor) {
-          cout << "= [ " << id << " :: CONCEDING TO " << right_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: FILE SENT TO " << right_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: RIGHT FILE RETURNED FROM " << right_neighbor << " ] =" << endl;
-        } else {
-          cout << "= [ " << id << " :: WORKING FIRST ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
-          cout << "= [ " << id << " :: RIGHT FILE RECEIVED FROM " << right_neighbor << " ] =" << endl;
-        }
-      }
-      MPI::COMM_WORLD.Isend(&msg_out, 1, MPI::INT, left_neighbor, access_file_left);
-      rec_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-      req_left = MPI::COMM_WORLD.Irecv(&msg_in, 1, MPI::INT, left_neighbor, access_file_right);
-      cout << "= [ " << id << " :: REQUESTING " << left_neighbor << ":" << id << " :: LEFT ] =" << endl;
-      while (!left_response) {
-        left_recieved = rec_left.Test(status_left);
-        left_requested = req_left.Test(status_left);
-        left_response = left_requested || left_recieved;
-      }
-      if (left_requested) {
-        cout << "= [ " << id << " :: RECIEVED REQUEST FROM " << left_neighbor << " ] =" << endl;
-        if (id > left_neighbor) {
-          cout << "= [ " << id << " :: CONCEDING TO " << left_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: FILE SENT TO " << left_neighbor << " ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: LEFT FILE RETURNED FROM " << left_neighbor << " ] =" << endl;
-        } else {
-          cout << "= [ " << id << " :: WORKING FIRST ] =" << endl;
-          MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
-          cout << "= [ " << id << " :: LEFT FILE RECEIVED FROM " << left_neighbor << " ] =" << endl;
-        }
-      }
+    if (!left_file) {
+      
+    }
+
+    if (!right_file) {
+
     }
 
     //construct poem & output stanzas into the files 'simultaneously'
