@@ -1,3 +1,13 @@
+/*
+ *      AUTHORS: Matthew Healy <mhealy@mst.edu>
+ *               Cody Roberts <cargy9@mst.edu>
+ *
+ *       COURSE: CS3800 - Intro. to Operating Systems
+ *   INSTRUCTOR: Michael Gosnell <gosnellm@mst.edu>
+ *  DESCRIPTION: An impementation of the "Dining Philosophers" problem,
+ *               shown as philosophers who write to two files simultaneously.
+ */
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -24,8 +34,6 @@ int main ( int argc, char *argv[] )
   MPI::Status status_right;
   MPI::Status status_glob;
   int give_file = 1;
-  int access_file_left = 2;
-  int access_file_right = 3;
   int tag = 4;
 
   MPI::Init(argc, argv);
@@ -41,12 +49,8 @@ int main ( int argc, char *argv[] )
   srand(id + time(NULL));
 
   int numWritten = 0;
-  bool left_requested = false;
-  bool right_requested = false;
-  bool left_response = false;
-  bool right_response = false;
-  bool left_recieved = false;
-  bool right_recieved = false;
+  bool has_left_file = false;
+  bool has_right_file = false;
   int msg_in, msg_out;
   int left_neighbor = (id - 1 + p) % p;
   int right_neighbor = (id + 1) % p;
@@ -56,6 +60,13 @@ int main ( int argc, char *argv[] )
   string right_file = fileBase + to_string(id) + ":" + to_string(right_neighbor);
   ofstream fout_left(left_file.c_str(), ios::out | ios::app );
   ofstream fout_right(right_file.c_str(), ios::out | ios::app );
+  if (id < p - 2) {
+    has_right_file = true;
+  }
+  if (id == p - 1) {
+    has_left_file = true;
+    has_right_file = true;
+  }
 
 
   while (numWritten < MAX_MESSAGES) {
@@ -74,17 +85,24 @@ int main ( int argc, char *argv[] )
     /*                =<< CHECKING FOR AVAILIBILIITY OF FILES >>=                  */
 
     // Check availability of files
-    if (!left_file) {
-      
+    if (!has_left_file) {
+      cout << "= [ " << id << " :: WAITING FOR LEFT FILE :: " << left_neighbor << "] =" << endl;
+      MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, left_neighbor, give_file);
+      cout << "= [ " << id << " :: LEFT FILE RECIEVED ] =" << endl;
     }
 
-    if (!right_file) {
-
+    if (!has_right_file) {
+      cout << "= [ " << id << " :: WAITING FOR RIGHT FILE :: " << right_neighbor << " ] =" << endl;
+      MPI::COMM_WORLD.Recv(&msg_in, 1, MPI::INT, right_neighbor, give_file);
+      cout << "= [ " << id << " :: RIGHT FILE RECIEVED ] =" << endl;
     }
 
     //construct poem & output stanzas into the files 'simultaneously'
     //we do this with an intermediate variable so both files contain the same poem!
-    cout << "\n   =<< " << id << " :: BEGIN CRITICAL SECTION >>=\n" << endl;
+    
+    cout << "\n=============================================" << endl;
+    cout << "||  =<< " << id << " :: BEGIN CRITICAL SECTION "<< numWritten+1 << " >>=  ||" << endl;
+    cout << "=============================================\n" << endl;
     string stanza_1, stanza_2, stanza_3;
     stanza_1 = P.getLine();
     fout_left << stanza_1 << endl;
@@ -97,16 +115,24 @@ int main ( int argc, char *argv[] )
     stanza_3 = P.getLine();
     fout_left << stanza_3 << endl << endl;
     fout_right << stanza_3 << endl << endl;
-
-    cout << "\n   =<< " << id << " :: WORK COMPLETE >>=\n" << endl;
+    
+    cout << "\n====================================" << endl;
+    cout << "||  =<< " << id << " :: WORK COMPLETE " << numWritten+1 <<" >>=  ||" << endl;
+    cout << "====================================\n" << endl;
     numWritten++;
   
   /*                              =<< GIVE BACK CONTROL >>=                           */
+    has_left_file = false;
     MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, left_neighbor, give_file);
     cout << "= [ " << id << " :: RETURNING LEFT ] =" << endl;
+
+    has_right_file = false;
     MPI::COMM_WORLD.Send(&msg_out, 1, MPI::INT, right_neighbor, give_file);
     cout << "= [ " << id << " :: RETURNING RIGHT ] =" << endl;
   }
+  cout << "\n=========================================" << endl;
+  cout << "||  =<< " << id << " :: ALL MESSAGES WRITTEN >>=  ||" << endl;
+  cout << "=========================================\n" << endl;
   fout_left.close();
   fout_right.close();
 
